@@ -1,46 +1,19 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import Image from 'next/image';
 
-type MediaCardProps = {
+interface MediaCardProps {
   title: string;
-  subtitle?: string;
-  imageUrl: string;
-  onPress?: () => void;
-};
-
-export default function MediaCard({ title, subtitle, imageUrl, onPress }: MediaCardProps) {
-  return (
-    <Pressable style={styles.container} onPress={onPress}>
-      <Image source={{ uri: imageUrl }} style={styles.image} />
-      <Text style={styles.title} numberOfLines={1}>
-        {title}
-      </Text>
-      {subtitle ? (
-        <Text style={styles.subtitle} numberOfLines={1}>
-          {subtitle}
-        </Text>
-      ) : null}
-    </Pressable>
-  );
+  description: string;
+  artwork: string;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: 140,
-    marginRight: 16,
-  },
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  title: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  subtitle: {
-    color: '#B3B3B3',
-    fontSize: 12,
-  },
-});
+export function MediaCard({ title, description, artwork }: MediaCardProps) {
+  return (
+    <div className="group min-w-[220px] rounded-2xl bg-spotify-card p-4 transition hover:-translate-y-1 hover:bg-white/10">
+      <div className="relative mb-4 h-40 w-full overflow-hidden rounded-xl">
+        <Image src={artwork} alt={title} fill className="object-cover" unoptimized />
+      </div>
+      <h3 className="text-lg font-semibold">{title}</h3>
+      <p className="text-sm text-white/60">{description}</p>
+    </div>
+  );
+}
