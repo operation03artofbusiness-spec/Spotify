@@ -1,36 +1,37 @@
-'use client';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LyricsLine } from '@/types';
+import { colors, spacing, typography } from '@/constants/theme';
 
-import { useEffect, useState } from 'react';
-
-interface LyricsPanelProps {
-  trackTitle: string;
-  artist: string;
-}
-
-export function LyricsPanel({ trackTitle, artist }: LyricsPanelProps) {
-  const [lyrics, setLyrics] = useState<string>('Loading lyrics...');
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const fetchLyrics = async () => {
-      try {
-        const response = await fetch(`/api/lyrics?track=${encodeURIComponent(trackTitle)}&artist=${encodeURIComponent(artist)}`);
-        const data = await response.json();
-        setLyrics(data.lyrics ?? 'Lyrics unavailable.');
-      } catch (error) {
-        setLyrics('Lyrics unavailable.');
-      }
-    };
-    fetchLyrics();
-    return () => controller.abort();
-  }, [trackTitle, artist]);
-
+export const LyricsPanel = ({ lines }: { lines: LyricsLine[] }) => {
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-black/40 p-4">
-      <p className="text-xs uppercase tracking-[0.3em] text-white/40">Lyrics</p>
-      <div className="mt-3 max-h-40 overflow-y-auto whitespace-pre-line text-sm text-white/70">
-        {lyrics}
-      </div>
-    </div>
+    <View style={styles.container}>
+      <Text style={styles.title}>Lyrics</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {lines.map((line) => (
+          <Text key={`${line.time}-${line.text}`} style={styles.line}>
+            {line.text}
+          </Text>
+        ))}
+      </ScrollView>
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: spacing.lg,
+    padding: spacing.md,
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: 16
+  },
+  title: {
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
+    ...typography.subtitle
+  },
+  line: {
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+    ...typography.body
+  }
+});

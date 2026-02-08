@@ -1,9 +1,6 @@
-node_modules
-.expo
-.expo-shared
-*.log
+node_modules/
+.expo/
+dist/
 .DS_Store
 .env
-.env.local
-.next
-out
+coverage/

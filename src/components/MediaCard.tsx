@@ -1,19 +1,45 @@
-import Image from 'next/image';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { colors, spacing, typography } from '@/constants/theme';
 
-interface MediaCardProps {
+type MediaCardProps = {
   title: string;
-  description: string;
-  artwork: string;
-}
+  subtitle: string;
+  artworkUrl: string;
+  onPress?: () => void;
+};
 
-export function MediaCard({ title, description, artwork }: MediaCardProps) {
+export const MediaCard = ({ title, subtitle, artworkUrl, onPress }: MediaCardProps) => {
   return (
-    <div className="group min-w-[220px] rounded-2xl bg-spotify-card p-4 transition hover:-translate-y-1 hover:bg-white/10">
-      <div className="relative mb-4 h-40 w-full overflow-hidden rounded-xl">
-        <Image src={artwork} alt={title} fill className="object-cover" unoptimized />
-      </div>
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="text-sm text-white/60">{description}</p>
-    </div>
+    <Pressable style={styles.card} onPress={onPress}>
+      <Image source={{ uri: artworkUrl }} style={styles.artwork} />
+      <Text style={styles.title} numberOfLines={1}>
+        {title}
+      </Text>
+      <Text style={styles.subtitle} numberOfLines={1}>
+        {subtitle}
+      </Text>
+    </Pressable>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  card: {
+    width: 150,
+    marginRight: spacing.md
+  },
+  artwork: {
+    width: 150,
+    height: 150,
+    borderRadius: 12,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.surfaceElevated
+  },
+  title: {
+    color: colors.textPrimary,
+    ...typography.subtitle
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    ...typography.caption
+  }
+});

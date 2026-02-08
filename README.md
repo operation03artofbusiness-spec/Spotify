@@ -1,26 +1,19 @@
-# Pulse Streaming Web App
+# Spotify-Like Mobile Music Streaming App
 
-A Spotify-inspired music streaming web application built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, **Zustand**, and **Firebase**.
+A Spotify-inspired mobile music streaming app built with **Expo + React Native + TypeScript**, featuring authentication, search, playlists, offline caching, lyrics, and premium dark UI.
 
 ## Features
 
-- Email/password and Google OAuth authentication
-- Home page with recently played, trending playlists, and recommendations
-- Real-time search for songs and artists
-- Full music player with shuffle, repeat, seek, and volume controls
-- Sticky bottom mini-player across pages
-- User library with liked songs, playlists, and recent plays
-- Artist profile pages with follow CTA
-- Lyrics panel powered by a public lyrics API
-- Offline caching with Service Workers + IndexedDB
-- Firebase Cloud Messaging web push notifications
-
-## Tech Stack
-
-- **Frontend:** Next.js (App Router), TypeScript, Tailwind CSS
-- **State:** Zustand
-- **Audio Engine:** HTML5 Audio
-- **Backend:** Firebase (Auth, Firestore, Storage, Cloud Functions)
+- **Authentication**: Email/password + Google sign-in (Firebase Auth)
+- **Home**: Recently played, trending playlists, recommended tracks (Firestore)
+- **Search**: Live filtering for songs and artists
+- **Player**: Full player with shuffle, repeat, seek display, and lyrics panel
+- **Mini Player**: Floating persistent player across the app
+- **Library**: Liked songs + playlists
+- **Playlists**: Create, rename, and update playlists (Firestore)
+- **Offline**: Download and cache songs (Expo FileSystem)
+- **Artist Profile**: Follow/unfollow, bio, and top songs
+- **Notifications**: Expo Notifications ready for FCM
 
 ## Getting Started
 
@@ -30,70 +23,72 @@ A Spotify-inspired music streaming web application built with **Next.js App Rout
 npm install
 ```
 
-### 2) Configure environment variables
+### 2) Configure Firebase
 
-Create a `.env.local` file:
+Create a Firebase project and enable:
+
+- Authentication (Email/Password, Google)
+- Firestore Database
+- Storage
+- Cloud Messaging
+
+Then create a `.env` file in the project root:
 
 ```bash
-NEXT_PUBLIC_FIREBASE_API_KEY=your_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-NEXT_PUBLIC_FIREBASE_VAPID_KEY=your_vapid_key
+EXPO_PUBLIC_FIREBASE_API_KEY=your-key
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your-domain
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your-bucket
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+EXPO_PUBLIC_FIREBASE_APP_ID=your-app-id
+EXPO_PUBLIC_GOOGLE_EXPO_CLIENT_ID=your-expo-client-id
+EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=your-ios-client-id
+EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=your-android-client-id
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=your-web-client-id
 ```
 
-### 3) Firebase setup guide
-
-1. Create a Firebase project.
-2. Enable **Authentication** providers: Email/Password and Google.
-3. Create a **Firestore** database in production or test mode.
-4. Enable **Cloud Storage** for audio and artwork assets.
-5. Set up **Cloud Messaging** and generate a Web Push certificate (VAPID key).
-6. (Optional) Create **Cloud Functions** to notify followers when artists upload tracks.
-
-### 4) Run the development server
+### 3) Run the app
 
 ```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-### 5) Build for production
-
-```bash
-npm run build
 npm run start
 ```
-
-## Service Worker & Offline Caching
-
-- The service worker caches key static assets and audio files in `public/sw.js`.
-- IndexedDB is used for offline track blobs in `src/lib/offlineCache.ts`.
 
 ## Project Structure
 
 ```
-app/
-  api/lyrics/route.ts
-  artist/[id]/page.tsx
-  library/page.tsx
-  login/page.tsx
-  search/page.tsx
-  signup/page.tsx
-src/components/
-  Player.tsx
-  Sidebar.tsx
-  ...
-src/lib/
-  firebase.ts
-  notifications.ts
-  offlineCache.ts
+src/
+  components/      # Reusable UI components
+  constants/       # Theme + constants
+  hooks/           # Custom hooks
+  navigation/      # React Navigation setup
+  screens/         # Application screens
+  services/        # Firebase + data services
+  store/           # Zustand stores
+  types/           # Shared TypeScript types
+```
+
+## Firestore Data Model (Suggested)
+
+```
+tracks/{trackId}
+  - title, artist, album, audioUrl, artworkUrl, duration, artistId, keywords
+artists/{artistId}
+  - name, imageUrl, bio, followers, monthlyListeners, keywords
+playlists/{playlistId}
+  - name, trackIds, ownerId
+users/{userId}/recentlyPlayed/{trackId}
+users/{userId}/playlists/{playlistId}
+users/{userId}/following/{artistId}
 ```
 
 ## Notes
 
-- The sample data can be replaced with Firestore reads in `src/data/mockData.ts`.
-- Update the fallback audio URL in `src/components/Player.tsx` with your own storage file.
+- Offline cache uses `expo-file-system` and falls back to streaming when not available.
+- Expo Notifications is configured for in-app alerts. For full FCM, add native credentials in Firebase and EAS.
+
+## Scripts
+
+- `npm run start` - start Expo
+- `npm run ios` - open iOS simulator
+- `npm run android` - open Android emulator
+
